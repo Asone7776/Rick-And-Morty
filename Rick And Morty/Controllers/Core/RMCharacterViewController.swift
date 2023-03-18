@@ -8,7 +8,7 @@
 import UIKit
 
 final class RMCharacterViewController: UIViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         let request = RMRequest(
@@ -16,7 +16,8 @@ final class RMCharacterViewController: UIViewController {
             pathComponents: ["1"],
             queryParameters: [URLQueryItem(name: "name", value: "rick"),URLQueryItem(name: "status", value: "alive")]
         );
-        RMService.shared.execute(request, expecting: String.self) { result in
+        print(request.url);
+        RMService.shared.execute(request, expecting: RMCharacter.self) { result in
             switch result{
             case .success(let str):
                 print(str)
@@ -25,5 +26,4 @@ final class RMCharacterViewController: UIViewController {
             }
         }
     }
-    
 }

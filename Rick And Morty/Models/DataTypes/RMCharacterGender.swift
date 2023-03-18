@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum RMCharacterGender:String,Decodable{
+enum RMCharacterGender:String,Codable{
     case male = "Male"
     case female = "Female"
     case genderless = "Genderless"
