@@ -33,7 +33,7 @@ extension RMTabViewController{
     }
     private func setupTabs(){
         tabBar.isTranslucent = false;
-        charactersVC.setTabBarImage(imageName: "person", title: "Characteristics", tag: 0);
+        charactersVC.setTabBarImage(imageName: "person.fill", title: "Characteristics", tag: 0);
         episodesVC.setTabBarImage(imageName: "tv", title: "Episodes", tag: 1);
         locationsVC.setTabBarImage(imageName: "globe", title: "Locations", tag: 2);
         settingsVC.setTabBarImage(imageName: "gear", title: "Settings", tag: 3);
