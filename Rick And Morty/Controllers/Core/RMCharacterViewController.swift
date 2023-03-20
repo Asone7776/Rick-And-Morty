@@ -8,7 +8,7 @@
 import UIKit
 
 final class RMCharacterViewController: UIViewController {
-    private let characterView = CharacterListView();
+    private let characterView = RMCharacterListView();
     override func viewDidLoad() {
         super.viewDidLoad();
         layout();

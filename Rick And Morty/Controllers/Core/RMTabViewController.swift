@@ -28,9 +28,6 @@ extension RMTabViewController{
         tabBar.standardAppearance = appearance;
         tabBar.scrollEdgeAppearance = appearance
     }
-    private func setupNavigations(){
-    
-    }
     private func setupTabs(){
         tabBar.isTranslucent = false;
         charactersVC.setTabBarImage(imageName: "person.fill", title: "Characteristics", tag: 0);
@@ -42,15 +39,18 @@ extension RMTabViewController{
         episodesVC.setupTitleAndBackground(title: "Episodes");
         locationsVC.setupTitleAndBackground(title: "Locations");
         settingsVC.setupTitleAndBackground(title: "Settings");
-        let charactersNV = UINavigationController(rootViewController: charactersVC);
-        let episodesNV = UINavigationController(rootViewController: episodesVC);
-        let locationsNV = UINavigationController(rootViewController: locationsVC);
-        let settingsNV = UINavigationController(rootViewController: settingsVC);
-        for nav in  [charactersNV,locationsNV,episodesNV,settingsNV]{
+        let navControllers = [
+            UINavigationController(rootViewController: charactersVC),
+            UINavigationController(rootViewController: episodesVC),
+            UINavigationController(rootViewController: locationsVC),
+            UINavigationController(rootViewController: settingsVC)
+        ]
+        navControllers.forEach { nav in
+            nav.navigationItem.largeTitleDisplayMode = .automatic
             nav.navigationBar.prefersLargeTitles = true;
         }
         setViewControllers(
-            [charactersNV,episodesNV,locationsNV,settingsNV],
+            navControllers,
             animated: false)
     }
 }

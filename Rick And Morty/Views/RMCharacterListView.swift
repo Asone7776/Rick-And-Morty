@@ -7,9 +7,9 @@
 
 import UIKit
 
-final class CharacterListView: UIView {
+final class RMCharacterListView: UIView {
     
-    private let viewModel = CharacterListViewViewModel();
+    private let viewModel = RMCharacterListViewViewModel();
     
     private let spinner: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(style: .large);
@@ -26,12 +26,13 @@ final class CharacterListView: UIView {
         collection.alpha = 0;
         collection.showsVerticalScrollIndicator = false;
         collection.translatesAutoresizingMaskIntoConstraints = false;
-        collection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell");
+        collection.register(RMCharacterCollectionViewCell.self, forCellWithReuseIdentifier: RMCharacterCollectionViewCell.identifier);
         return collection;
     }();
     
     override init(frame: CGRect) {
         super.init(frame: frame);
+        viewModel.delegate = self;
         viewModel.fetchCharacters();
         style();
         layout();
@@ -42,7 +43,7 @@ final class CharacterListView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 }
-extension CharacterListView{
+extension RMCharacterListView{
     private func style(){
         translatesAutoresizingMaskIntoConstraints = false;
     }
@@ -64,13 +65,18 @@ extension CharacterListView{
     private func setupCollectionView(){
         collectionView.dataSource = viewModel;
         collectionView.delegate = viewModel;
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2){
-            self.spinner.stopAnimating();
-            self.collectionView.isHidden = false;
-            UIView.animate(withDuration: 0.3) {
-                self.collectionView.alpha = 1;
-            }
+    }
+    
+    
+}
+extension RMCharacterListView:RMCharacterListViewViewModelDelegate{
+    func didLoadInitialCharacters() {
+        self.collectionView.reloadData();
+        self.collectionView.isHidden = false;
+        self.spinner.stopAnimating();
+
+        UIView.animate(withDuration: 0.3) {
+            self.collectionView.alpha = 1;
         }
     }
 }
-

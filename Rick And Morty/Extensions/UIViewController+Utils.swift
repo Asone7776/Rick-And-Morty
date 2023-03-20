@@ -16,7 +16,6 @@ extension UIViewController{
     func setupTitleAndBackground(title:String){
         self.title = title;
         self.view.backgroundColor = .systemBackground;
-        self.navigationItem.largeTitleDisplayMode = .automatic;
     }
 }
 
