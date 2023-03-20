@@ -38,7 +38,7 @@ extension RMTabViewController{
         locationsVC.setTabBarImage(imageName: "globe", title: "Locations", tag: 2);
         settingsVC.setTabBarImage(imageName: "gear", title: "Settings", tag: 3);
         
-        charactersVC.setupTitleAndBackground(title: "Characteristics");
+        charactersVC.setupTitleAndBackground(title: "Characters");
         episodesVC.setupTitleAndBackground(title: "Episodes");
         locationsVC.setupTitleAndBackground(title: "Locations");
         settingsVC.setupTitleAndBackground(title: "Settings");

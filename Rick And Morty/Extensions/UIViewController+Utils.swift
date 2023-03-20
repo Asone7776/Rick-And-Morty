@@ -19,3 +19,9 @@ extension UIViewController{
         self.navigationItem.largeTitleDisplayMode = .automatic;
     }
 }
+
+extension UIView{
+    func addSubviews(_ views:UIView...){
+        views.forEach { addSubview($0) }
+    }
+}

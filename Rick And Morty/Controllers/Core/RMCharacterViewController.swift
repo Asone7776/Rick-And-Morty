@@ -8,22 +8,20 @@
 import UIKit
 
 final class RMCharacterViewController: UIViewController {
-    
+    private let characterView = CharacterListView();
     override func viewDidLoad() {
-        super.viewDidLoad()
-        let request = RMRequest(
-            endpoint: .character,
-            pathComponents: ["1"],
-            queryParameters: [URLQueryItem(name: "name", value: "rick"),URLQueryItem(name: "status", value: "alive")]
-        );
-        print(request.url);
-        RMService.shared.execute(request, expecting: RMCharacter.self) { result in
-            switch result{
-            case .success(let str):
-                print(str)
-            case .failure(let error):
-                print(error);
-            }
-        }
+        super.viewDidLoad();
+        layout();
+    }
+}
+extension RMCharacterViewController{
+    func layout(){
+        view.addSubview(characterView);
+        NSLayoutConstraint.activate([
+            characterView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            characterView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            characterView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            characterView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        ])
     }
 }
