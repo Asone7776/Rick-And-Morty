@@ -24,14 +24,14 @@ final class RMCharacterListView: UIView {
         return view;
     }();
     
-    private let collectionView: UICollectionView = {
+    public let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout();
         layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 10, right: 10);
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout);
         collection.isHidden = true;
         collection.alpha = 0;
         collection.showsVerticalScrollIndicator = false;
-        collection.contentInsetAdjustmentBehavior = .never
+//        collection.contentInsetAdjustmentBehavior = .never
         collection.translatesAutoresizingMaskIntoConstraints = false;
         collection.register(RMCharacterCollectionViewCell.self, forCellWithReuseIdentifier: RMCharacterCollectionViewCell.identifier);
         return collection;
@@ -49,6 +49,7 @@ final class RMCharacterListView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
 }
 extension RMCharacterListView{
     private func style(){

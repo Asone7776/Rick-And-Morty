@@ -14,6 +14,10 @@ final class RMCharacterViewController: UIViewController {
         characterView.delegate = self;
         layout();
     }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        characterView.collectionView.collectionViewLayout.invalidateLayout()
+    }
 }
 extension RMCharacterViewController{
     func layout(){
