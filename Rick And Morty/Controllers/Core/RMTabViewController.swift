@@ -7,18 +7,14 @@
 
 import UIKit
 
-final class RMTabViewController: UITabBarController {
+ class RMTabViewController: UITabBarController {
     let charactersVC = RMCharacterViewController();
     let episodesVC = RMEpisodeViewController();
     let locationsVC = RMLocationViewController();
     let settingsVC = RMSettingsViewController();
     override func viewDidLoad() {
         super.viewDidLoad()
-    }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated);
         setupTabs();
-        setupTabBarAppearance();
     }
 }
 extension RMTabViewController{
@@ -27,9 +23,9 @@ extension RMTabViewController{
         appearance.shadowColor = .clear
         tabBar.standardAppearance = appearance;
         tabBar.scrollEdgeAppearance = appearance
+        tabBar.isTranslucent = false;
     }
     private func setupTabs(){
-        tabBar.isTranslucent = false;
         charactersVC.setTabBarImage(imageName: "person.fill", title: "Characteristics", tag: 0);
         episodesVC.setTabBarImage(imageName: "tv", title: "Episodes", tag: 1);
         locationsVC.setTabBarImage(imageName: "globe", title: "Locations", tag: 2);
@@ -45,12 +41,11 @@ extension RMTabViewController{
             UINavigationController(rootViewController: locationsVC),
             UINavigationController(rootViewController: settingsVC)
         ]
+        
         navControllers.forEach { nav in
             nav.navigationItem.largeTitleDisplayMode = .automatic
             nav.navigationBar.prefersLargeTitles = true;
         }
-        setViewControllers(
-            navControllers,
-            animated: false)
+        viewControllers = navControllers;
     }
 }

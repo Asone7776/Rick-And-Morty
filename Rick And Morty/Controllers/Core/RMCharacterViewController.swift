@@ -11,6 +11,7 @@ final class RMCharacterViewController: UIViewController {
     private let characterView = RMCharacterListView();
     override func viewDidLoad() {
         super.viewDidLoad();
+        characterView.delegate = self;
         layout();
     }
 }
@@ -25,3 +26,12 @@ extension RMCharacterViewController{
         ])
     }
 }
+//MARK: - RMCharacterListViewDelegate
+extension RMCharacterViewController: RMCharacterListViewDelegate{
+    func rmCharacterListView(_ characterListView: RMCharacterListView, didSelectCharacter character: RMCharacter) {
+        let viewModel = RMCharacterDetailViewViewModel(character: character);
+        let detailVc = RMCharacterDetailViewController(viewModel: viewModel);
+        navigationController?.pushViewController(detailVc, animated: true);
+    }
+}
+

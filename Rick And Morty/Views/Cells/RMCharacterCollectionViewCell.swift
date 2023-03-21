@@ -11,7 +11,7 @@ import UIKit
 final class RMCharacterCollectionViewCell: UICollectionViewCell {
     static let identifier = "characterCell";
     
-    let imageView:UIImageView = {
+    let imageView: UIImageView = {
         let imageView = UIImageView();
         imageView.contentMode = .scaleAspectFill;
         imageView.clipsToBounds = true;

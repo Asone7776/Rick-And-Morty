@@ -9,10 +9,12 @@ import UIKit
 
 protocol RMCharacterListViewViewModelDelegate: AnyObject{
     func didLoadInitialCharacters()
+    func didSelectCharacter(character:RMCharacter)
 }
 
 final class RMCharacterListViewViewModel:NSObject {
     public weak var delegate:RMCharacterListViewViewModelDelegate?
+    private var apiInfo: RMGetAllCharactersResponseInfo?
     private var characters = [RMCharacter](){
         didSet{
             characters.forEach { char in
@@ -27,6 +29,7 @@ final class RMCharacterListViewViewModel:NSObject {
             switch result{
             case .success(let model):
                 self?.characters = model.results;
+                self?.apiInfo = model.info;
                 DispatchQueue.main.async {
                     self?.delegate?.didLoadInitialCharacters();
                 }
@@ -35,6 +38,10 @@ final class RMCharacterListViewViewModel:NSObject {
             }
         }
     }
+    public var shouldShowLoadMoreIndicator: Bool{
+        return apiInfo?.next != nil
+    }
+    
 }
 extension RMCharacterListViewViewModel:UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -55,5 +62,18 @@ extension RMCharacterListViewViewModel: UICollectionViewDelegateFlowLayout{
         let bounds = UIScreen.main.bounds;
         let width = (bounds.width - 30) / 2;
         return CGSize(width: width, height: width * 1.5 );
+    }
+}
+extension RMCharacterListViewViewModel:UICollectionViewDelegate{
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true);
+        delegate?.didSelectCharacter(character: characters[indexPath.row]);
+    }
+}
+extension RMCharacterListViewViewModel:UIScrollViewDelegate{
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard shouldShowLoadMoreIndicator else {
+            return
+        }
     }
 }
