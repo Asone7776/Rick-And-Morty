@@ -31,9 +31,9 @@ final class RMCharacterListView: UIView {
         collection.isHidden = true;
         collection.alpha = 0;
         collection.showsVerticalScrollIndicator = false;
-//        collection.contentInsetAdjustmentBehavior = .never
         collection.translatesAutoresizingMaskIntoConstraints = false;
         collection.register(RMCharacterCollectionViewCell.self, forCellWithReuseIdentifier: RMCharacterCollectionViewCell.identifier);
+        collection.register(RMFooterLoadingCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: RMFooterLoadingCollectionReusableView.identifier)
         return collection;
     }();
     
@@ -89,5 +89,10 @@ extension RMCharacterListView:RMCharacterListViewViewModelDelegate{
     }
     func didSelectCharacter(character: RMCharacter) {
         delegate?.rmCharacterListView(self, didSelectCharacter: character);
+    }
+    func didLoadMoreCharacters(with newIndexPaths: [IndexPath]) {
+        collectionView.performBatchUpdates {
+            self.collectionView.insertItems(at: newIndexPaths)
+        }
     }
 }

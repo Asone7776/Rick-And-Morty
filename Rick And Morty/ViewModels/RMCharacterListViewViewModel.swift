@@ -10,11 +10,13 @@ import UIKit
 protocol RMCharacterListViewViewModelDelegate: AnyObject{
     func didLoadInitialCharacters()
     func didSelectCharacter(character:RMCharacter)
+    func didLoadMoreCharacters(with newIndexPaths: [IndexPath])
 }
 
 final class RMCharacterListViewViewModel:NSObject {
     public weak var delegate:RMCharacterListViewViewModelDelegate?
     private var apiInfo: RMGetAllCharactersResponseInfo?
+    private var isLoadingCharacters = false
     private var characters = [RMCharacter](){
         didSet{
             characters.forEach { char in
@@ -38,6 +40,42 @@ final class RMCharacterListViewViewModel:NSObject {
             }
         }
     }
+    public func fetchAdditionalCharacters(url:URL){
+        guard !isLoadingCharacters else{
+            return
+        }
+        isLoadingCharacters = true
+        
+        guard let request = RMRequest(url: url) else{
+            return
+        }
+        RMService.shared.execute(request, expecting: RMGetAllCharactersResponse.self) {[weak self] result in
+            guard let strongSelf = self else {
+                return
+            }
+            switch result {
+            case .success(let success):
+                strongSelf.apiInfo = success.info;
+                let originalCount = strongSelf.characters.count;
+                let newCount = success.results.count;
+                let total = originalCount + newCount;
+                let startingIndex = total - newCount;
+                let indexPathsToAdd:[IndexPath] = Array(startingIndex..<(startingIndex+newCount)).compactMap {
+                    return IndexPath(row: $0, section: 0);
+                }
+                
+                strongSelf.characters.append(contentsOf: success.results);
+                DispatchQueue.main.async {
+                    strongSelf.delegate?.didLoadMoreCharacters(with:indexPathsToAdd);
+                    strongSelf.isLoadingCharacters = false;
+                }
+            case .failure(let failure):
+                print(failure.localizedDescription);
+                strongSelf.isLoadingCharacters = false;
+            }
+        }
+        
+    }
     public var shouldShowLoadMoreIndicator: Bool{
         return apiInfo?.next != nil
     }
@@ -56,6 +94,19 @@ extension RMCharacterListViewViewModel:UICollectionViewDataSource{
         return cell;
     }
     
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        guard kind == UICollectionView.elementKindSectionFooter,let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: RMFooterLoadingCollectionReusableView.identifier, for: indexPath) as? RMFooterLoadingCollectionReusableView else{
+            fatalError("Unsupported");
+        }
+        footer.startAnimating();
+        return footer;
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        guard shouldShowLoadMoreIndicator else{
+            return .zero;
+        }
+        return CGSize(width: collectionView.bounds.width, height: 100);
+    }
 }
 extension RMCharacterListViewViewModel: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -72,8 +123,21 @@ extension RMCharacterListViewViewModel:UICollectionViewDelegate{
 }
 extension RMCharacterListViewViewModel:UIScrollViewDelegate{
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard shouldShowLoadMoreIndicator else {
+        guard shouldShowLoadMoreIndicator,
+              !isLoadingCharacters,
+              let nextUrl = apiInfo?.next,
+              !cellViewModels.isEmpty,
+              let url = URL(string: nextUrl) else {
             return
+        }
+        Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { [weak self] timer in
+            let offset = scrollView.contentOffset.y;
+            let totalContentHeight = scrollView.contentSize.height;
+            let totalScrollViewHeight = scrollView.frame.size.height;
+            if offset >= (totalContentHeight - totalScrollViewHeight) - 120 {
+                self?.fetchAdditionalCharacters(url: url);
+            }
+            timer.invalidate();
         }
     }
 }
