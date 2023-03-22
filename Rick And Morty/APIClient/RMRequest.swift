@@ -65,8 +65,16 @@ final class RMRequest {
             let components = trimmed.components(separatedBy: "?")
             if !components.isEmpty{
                 let endpointString = components[0];
+                let queryItemsString = components[1];
+                let queryParameters: [URLQueryItem] = queryItemsString.components(separatedBy: "&").compactMap({
+                    guard $0.contains("=") else {
+                        return nil
+                    }
+                    let path = $0.components(separatedBy: "=");
+                    return URLQueryItem(name: path[0], value: path[1]);
+                });
                 if let rmEndpoint = RMEndpoint(rawValue: endpointString){
-                    self.init(endpoint: rmEndpoint);
+                    self.init(endpoint: rmEndpoint,queryParameters: queryParameters);
                     return;
                 }
             }

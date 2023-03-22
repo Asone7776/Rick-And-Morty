@@ -19,13 +19,16 @@ final class RMCharacterListViewViewModel:NSObject {
     private var isLoadingCharacters = false
     private var characters = [RMCharacter](){
         didSet{
-            characters.forEach { char in
+            for char in characters {
                 let viewModel = RMCharacterCollectionViewCellViewModel(characterName: char.name, characterStatus: char.status, characterImageUrl: URL(string: char.image));
-                cellViewModels.append(viewModel);
+                if !cellViewModels.contains(viewModel){
+                    cellViewModels.append(viewModel);
+                }
             }
         }
     }
     private var cellViewModels = [RMCharacterCollectionViewCellViewModel]();
+    //MARK: Initial fetch
     func fetchCharacters(){
         RMService.shared.execute(.listCharactersRequest, expecting: RMGetAllCharactersResponse.self) {[weak self] result in
             switch result{
@@ -40,6 +43,7 @@ final class RMCharacterListViewViewModel:NSObject {
             }
         }
     }
+    //MARK: Fetch additional characters
     public func fetchAdditionalCharacters(url:URL){
         guard !isLoadingCharacters else{
             return
@@ -49,6 +53,7 @@ final class RMCharacterListViewViewModel:NSObject {
         guard let request = RMRequest(url: url) else{
             return
         }
+        
         RMService.shared.execute(request, expecting: RMGetAllCharactersResponse.self) {[weak self] result in
             guard let strongSelf = self else {
                 return
@@ -63,7 +68,6 @@ final class RMCharacterListViewViewModel:NSObject {
                 let indexPathsToAdd:[IndexPath] = Array(startingIndex..<(startingIndex+newCount)).compactMap {
                     return IndexPath(row: $0, section: 0);
                 }
-                
                 strongSelf.characters.append(contentsOf: success.results);
                 DispatchQueue.main.async {
                     strongSelf.delegate?.didLoadMoreCharacters(with:indexPathsToAdd);
@@ -74,13 +78,13 @@ final class RMCharacterListViewViewModel:NSObject {
                 strongSelf.isLoadingCharacters = false;
             }
         }
-        
     }
     public var shouldShowLoadMoreIndicator: Bool{
         return apiInfo?.next != nil
     }
-    
 }
+
+//MARK: Characters Collection View DataSource
 extension RMCharacterListViewViewModel:UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return cellViewModels.count;
@@ -108,6 +112,8 @@ extension RMCharacterListViewViewModel:UICollectionViewDataSource{
         return CGSize(width: collectionView.bounds.width, height: 100);
     }
 }
+
+//MARK: Flow Layout and delegate
 extension RMCharacterListViewViewModel: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let bounds = UIScreen.main.bounds;
@@ -121,6 +127,8 @@ extension RMCharacterListViewViewModel:UICollectionViewDelegate{
         delegate?.didSelectCharacter(character: characters[indexPath.row]);
     }
 }
+
+//MARK: On Scroll
 extension RMCharacterListViewViewModel:UIScrollViewDelegate{
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard shouldShowLoadMoreIndicator,
@@ -131,11 +139,14 @@ extension RMCharacterListViewViewModel:UIScrollViewDelegate{
             return
         }
         Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { [weak self] timer in
+            guard let strongSelf = self else {
+                return
+            }
             let offset = scrollView.contentOffset.y;
             let totalContentHeight = scrollView.contentSize.height;
             let totalScrollViewHeight = scrollView.frame.size.height;
             if offset >= (totalContentHeight - totalScrollViewHeight) - 120 {
-                self?.fetchAdditionalCharacters(url: url);
+                strongSelf.fetchAdditionalCharacters(url: url);
             }
             timer.invalidate();
         }

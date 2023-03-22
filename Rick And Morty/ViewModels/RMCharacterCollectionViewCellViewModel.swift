@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class RMCharacterCollectionViewCellViewModel{
+final class RMCharacterCollectionViewCellViewModel: Hashable, Equatable{
     let characterName:String
     let characterStatus:RMCharacterStatus
     let characterImageUrl:URL?
@@ -17,6 +17,7 @@ final class RMCharacterCollectionViewCellViewModel{
         self.characterStatus = characterStatus
         self.characterImageUrl = characterImageUrl
     }
+
     
     public var characterStatusText: String {
         "Status: \(characterStatus.text)"
@@ -35,5 +36,17 @@ final class RMCharacterCollectionViewCellViewModel{
             completion(.success(data));
         }
         task.resume();
+    }
+}
+extension RMCharacterCollectionViewCellViewModel {
+    
+    static func == (lhs: RMCharacterCollectionViewCellViewModel, rhs: RMCharacterCollectionViewCellViewModel) -> Bool {
+        return lhs.hashValue == rhs.hashValue;
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(characterName);
+        hasher.combine(characterStatus);
+        hasher.combine(characterImageUrl);
     }
 }
