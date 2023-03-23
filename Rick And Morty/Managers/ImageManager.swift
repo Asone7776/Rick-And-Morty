@@ -21,7 +21,7 @@ final class ImageLoader{
         }
         let request = URLRequest(url: url);
         let task = URLSession.shared.dataTask(with: request) {[weak self] data, _, error in
-            guard let strongSelf = self else {
+            guard let self = self else {
                 return
             }
             guard let data = data, error == nil else {
@@ -30,7 +30,7 @@ final class ImageLoader{
             }
             let key = url.absoluteString as NSString;
             let value = data as NSData;
-            strongSelf.imageDataCache.setObject(value, forKey: key);
+            self.imageDataCache.setObject(value, forKey: key);
             completion(.success(data));
         }
         task.resume();
