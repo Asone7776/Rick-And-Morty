@@ -13,7 +13,7 @@ final class RMCharacterDetailView: UIView {
     
     public lazy var collectionView:UICollectionView = {
         let layout = UICollectionViewCompositionalLayout {sectionIndex,_ in
-            return self.createSection(for: sectionIndex);
+            return self.createSection(for: sectionIndex)
         }
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout);
         collection.translatesAutoresizingMaskIntoConstraints = false;
@@ -56,46 +56,28 @@ extension RMCharacterDetailView{
     }
     private func createSection(for sectionIndex: Int) -> NSCollectionLayoutSection{
         guard let model = viewModel else{
-            return createInfoSection();
+            return dummySection();
         }
         switch model.sections[sectionIndex]{
         case .photo:
-            return createPhotoSection()
+            return model.createPhotoSection()
         case .information:
-            return createInfoSection()
+            return model.createInfoSection()
         case.episodes:
-            return createEpisodesSection()
+            return model.createEpisodesSection()
         }
     }
-    private func createPhotoSection() -> NSCollectionLayoutSection{
+    
+    public func dummySection() -> NSCollectionLayoutSection{
         let item = NSCollectionLayoutItem(
             layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),heightDimension: .fractionalHeight(1.0))
         )
         item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0);
-        let group = NSCollectionLayoutGroup.vertical(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(150)), subitems: [item])
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(0.5)), subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
         return section;
     }
     
-    private func createInfoSection() -> NSCollectionLayoutSection{
-        let item = NSCollectionLayoutItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),heightDimension: .fractionalHeight(1.0))
-        )
-        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0);
-        let group = NSCollectionLayoutGroup.vertical(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(150)), subitems: [item])
-        let section = NSCollectionLayoutSection(group: group)
-        return section;
-    }
-    
-    private func createEpisodesSection() -> NSCollectionLayoutSection{
-        let item = NSCollectionLayoutItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),heightDimension: .fractionalHeight(1.0))
-        )
-        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0);
-        let group = NSCollectionLayoutGroup.vertical(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(150)), subitems: [item])
-        let section = NSCollectionLayoutSection(group: group)
-        return section;
-    }
     public func configure(with model:RMCharacterDetailViewViewModel){
         self.viewModel = model;
     }
