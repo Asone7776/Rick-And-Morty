@@ -32,7 +32,6 @@ final class RMCharacterDetailView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame);
-        backgroundColor = .systemRed;
         layout();
     }
     

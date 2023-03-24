@@ -10,8 +10,17 @@ import UIKit
 final class RMCharacterPhotoCollectionViewCell: UICollectionViewCell {
     static let identifier = "RMCharacterPhotoCollectionViewCell";
     
+    let imageView: UIImageView = {
+        let imageView = UIImageView();
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false;
+        return imageView;
+    }();
+    
     override init(frame: CGRect) {
         super.init(frame: frame);
+        setupConstrains();
     }
     
     required init?(coder: NSCoder) {
@@ -21,9 +30,24 @@ final class RMCharacterPhotoCollectionViewCell: UICollectionViewCell {
         super.prepareForReuse();
     }
     private func setupConstrains(){
-        
+        contentView.addSubview(imageView);
+        NSLayoutConstraint.activate([
+            imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            imageView.topAnchor.constraint(equalTo: topAnchor),
+            imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            imageView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ]);
     }
     public func configure(with model:RMCharacterPhotoCollectionViewCellViewModel){
-        
+        model.fetchImage {[weak self] result in
+            switch result {
+            case .success(let success):
+                DispatchQueue.main.async {
+                    self?.imageView.image = UIImage(data: success)
+                }
+            case .failure(let failure):
+                print(failure)
+            }
+        }
     }
 }

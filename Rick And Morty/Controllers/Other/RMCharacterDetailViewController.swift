@@ -78,21 +78,18 @@ extension RMCharacterDetailViewController:UICollectionViewDataSource{
                 fatalError("Unsupported")
             }
             cell.configure(with: viewModel)
-            cell.backgroundColor = .systemBlue
             return cell;
         case .information(let viewModels):
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RMCharacterInfoCollectionViewCell.identifier, for: indexPath) as? RMCharacterInfoCollectionViewCell else{
                 fatalError("Unsupported")
             }
             cell.configure(with: viewModels[indexPath.row])
-            cell.backgroundColor = .systemTeal
             return cell;
         case .episodes(let viewModels):
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RMCharacterEpisodeCollectionViewCell.identifier, for: indexPath) as? RMCharacterEpisodeCollectionViewCell else{
                 fatalError("Unsupported")
             }
             cell.configure(with: viewModels[indexPath.row])
-            cell.backgroundColor = .systemOrange
             return cell;
         }
     }
