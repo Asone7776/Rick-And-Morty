@@ -9,15 +9,19 @@ import UIKit
 
 final class RMCharacterDetailViewViewModel{
     private let character:RMCharacter
+    
+    enum SectionType {
+        case photo(viewModel:RMCharacterPhotoCollectionViewCellViewModel)
+        case information(viewModel:[RMCharacterInfoCollectionViewCellViewModel])
+        case episodes(viewModel:[RMCharacterEpisodeCollectionViewCellViewModel])
+    }
+    public var sections = [SectionType]();
+    
     init(character:RMCharacter){
         self.character = character;
+        setupSections();
     }
-    enum SectionType: CaseIterable {
-        case photo
-        case information
-        case episodes
-    }
-    public let sections = SectionType.allCases;
+
     
     public var title:String {
         character.name.uppercased();
@@ -53,5 +57,22 @@ final class RMCharacterDetailViewViewModel{
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .groupPaging
         return section;
+    }
+    private func setupSections(){
+        sections = [
+            .photo(viewModel: .init()),
+            .information(viewModel: [
+                .init(),
+                .init(),
+                .init(),
+                .init()
+            ]),
+            .episodes(viewModel: [
+                .init(),
+                .init(),
+                .init(),
+                .init()
+            ])
+        ]
     }
 }

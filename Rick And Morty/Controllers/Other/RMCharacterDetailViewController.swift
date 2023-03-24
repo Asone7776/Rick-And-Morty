@@ -60,29 +60,41 @@ extension RMCharacterDetailViewController:UICollectionViewDataSource{
         return viewModel.sections.count;
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        switch section{
-        case 0:
+        let sectionType = viewModel.sections[section];
+        switch sectionType{
+        case .photo:
             return 1;
-        case 1:
-            return 8;
-        case 2:
-            return 10;
-        default:
-            return 1
+        case .episodes(let episodes):
+            return episodes.count;
+        case .information(let information):
+            return information.count;
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "detailcell", for: indexPath);
-        if indexPath.section == 0{
-            cell.backgroundColor = .systemPink;
+        switch viewModel.sections[indexPath.section]{
+        case .photo(let viewModel):
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RMCharacterPhotoCollectionViewCell.identifier, for: indexPath) as? RMCharacterPhotoCollectionViewCell else{
+                fatalError("Unsupported")
+            }
+            cell.configure(with: viewModel)
+            cell.backgroundColor = .systemBlue
+            return cell;
+        case .information(let viewModels):
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RMCharacterInfoCollectionViewCell.identifier, for: indexPath) as? RMCharacterInfoCollectionViewCell else{
+                fatalError("Unsupported")
+            }
+            cell.configure(with: viewModels[indexPath.row])
+            cell.backgroundColor = .systemTeal
+            return cell;
+        case .episodes(let viewModels):
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RMCharacterEpisodeCollectionViewCell.identifier, for: indexPath) as? RMCharacterEpisodeCollectionViewCell else{
+                fatalError("Unsupported")
+            }
+            cell.configure(with: viewModels[indexPath.row])
+            cell.backgroundColor = .systemOrange
+            return cell;
         }
-        else if indexPath.section == 1{
-            cell.backgroundColor = .systemBlue;
-        }else{
-            cell.backgroundColor = .systemCyan;
-        }
-        return cell;
     }
 }
 extension RMCharacterDetailViewController:UICollectionViewDelegate{

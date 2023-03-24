@@ -17,7 +17,9 @@ final class RMCharacterDetailView: UIView {
         }
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout);
         collection.translatesAutoresizingMaskIntoConstraints = false;
-        collection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "detailcell")
+        collection.register(RMCharacterPhotoCollectionViewCell.self, forCellWithReuseIdentifier: RMCharacterPhotoCollectionViewCell.identifier)
+        collection.register(RMCharacterInfoCollectionViewCell.self, forCellWithReuseIdentifier: RMCharacterInfoCollectionViewCell.identifier)
+        collection.register(RMCharacterEpisodeCollectionViewCell.self, forCellWithReuseIdentifier: RMCharacterEpisodeCollectionViewCell.identifier)
         return collection;
     }();
     
