@@ -59,9 +59,7 @@ final class RMRequest {
                 var pathComponents:[String] = [];
                 if components.count > 1{
                     pathComponents = components;
-                    print(pathComponents);
                     pathComponents.removeFirst();
-                    print(pathComponents);
                 }
                 if let rmEndpoint = RMEndpoint(rawValue: endpointString){
                     self.init(endpoint: rmEndpoint,pathComponents: pathComponents);

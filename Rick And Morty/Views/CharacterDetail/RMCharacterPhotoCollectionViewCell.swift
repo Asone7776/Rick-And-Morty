@@ -12,7 +12,7 @@ final class RMCharacterPhotoCollectionViewCell: UICollectionViewCell {
     
     let imageView: UIImageView = {
         let imageView = UIImageView();
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false;
         return imageView;
@@ -20,6 +20,7 @@ final class RMCharacterPhotoCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame);
+        style();
         setupConstrains();
     }
     
@@ -49,5 +50,12 @@ final class RMCharacterPhotoCollectionViewCell: UICollectionViewCell {
                 print(failure)
             }
         }
+    }
+}
+extension RMCharacterPhotoCollectionViewCell{
+    private func style(){
+        contentView.backgroundColor = .systemGray5
+        contentView.layer.cornerRadius = 8
+        contentView.clipsToBounds = true
     }
 }
