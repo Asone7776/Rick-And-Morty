@@ -10,14 +10,29 @@ import UIKit
 final class RMCharacterEpisodeCollectionViewCell: UICollectionViewCell {
     static let identifier = "RMCharacterEpisodeCollectionViewCell";
     
+    private let stack: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 10
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }();
+    
     private let nameLabel: UILabel = {
         let label = UILabel();
         label.translatesAutoresizingMaskIntoConstraints = false;
-        label.textColor = .red;
+        label.textColor = .label;
+        label.textAlignment = .center;
         return label;
     }();
     
-    
+    private let episodeLabel: UILabel = {
+        let label = UILabel();
+        label.translatesAutoresizingMaskIntoConstraints = false;
+        label.textColor = .label;
+        label.textAlignment = .center;
+        return label;
+    }();
     
     override init(frame: CGRect) {
         super.init(frame: frame);
@@ -32,21 +47,24 @@ final class RMCharacterEpisodeCollectionViewCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse();
         nameLabel.text = nil;
+        episodeLabel.text = nil;
     }
     
 }
 extension RMCharacterEpisodeCollectionViewCell{
     private func style(){
-        contentView.backgroundColor = .systemBlue;
+        contentView.backgroundColor = .systemGray5;
         contentView.layer.cornerRadius = 8;
         contentView.clipsToBounds = true;
     }
     
     private func layout(){
-        contentView.addSubview(nameLabel);
+        stack.addArrangedSubview(episodeLabel);
+        stack.addArrangedSubview(nameLabel);
+        contentView.addSubview(stack);
         NSLayoutConstraint.activate([
-            nameLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            nameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            stack.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            stack.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
     
@@ -55,7 +73,8 @@ extension RMCharacterEpisodeCollectionViewCell{
             switch result {
             case .success(let success):
                 DispatchQueue.main.async {
-                    self?.nameLabel.text = success.episode
+                    self?.nameLabel.text = success.name
+                    self?.episodeLabel.text = success.episode
                 }
             case .failure(let failure):
                 print(failure);

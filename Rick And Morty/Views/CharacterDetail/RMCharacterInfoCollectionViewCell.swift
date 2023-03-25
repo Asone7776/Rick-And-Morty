@@ -15,6 +15,7 @@ final class RMCharacterInfoCollectionViewCell: UICollectionViewCell {
         label.numberOfLines = 2;
         label.text = "Earth"
         label.translatesAutoresizingMaskIntoConstraints = false;
+        label.textAlignment = .center
         return label;
     }()
     
