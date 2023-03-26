@@ -93,6 +93,17 @@ extension RMCharacterDetailViewController:UICollectionViewDataSource{
             return cell;
         }
     }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        switch viewModel.sections[indexPath.section]{
+        case .photo,.information:
+            break;
+        case .episodes:
+            let episodes = self.viewModel.episodes;
+            let selected = episodes[indexPath.row];
+            let vc = RMEpisodeDetailViewController(url: URL(string: selected));
+            navigationController?.pushViewController(vc, animated: true);
+        }
+    }
 }
 extension RMCharacterDetailViewController:UICollectionViewDelegate{
     

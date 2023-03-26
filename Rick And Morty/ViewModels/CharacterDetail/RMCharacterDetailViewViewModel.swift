@@ -15,6 +15,11 @@ final class RMCharacterDetailViewViewModel{
         case information(viewModel:[RMCharacterInfoCollectionViewCellViewModel])
         case episodes(viewModel:[RMCharacterEpisodeCollectionViewCellViewModel])
     }
+    
+    public var episodes: [String] {
+        character.episode
+    }
+    
     public var sections = [SectionType]();
     
     public var title:String {
