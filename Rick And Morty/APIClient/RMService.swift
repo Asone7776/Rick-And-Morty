@@ -12,6 +12,8 @@ import Foundation
 final class RMService {
     static let shared = RMService();
     
+    private let cacheManager = RMAPICacheManager();
+    
     enum RMServiceError:Error{
         case failedToCreateRequest
         case failedToGetData
