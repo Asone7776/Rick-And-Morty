@@ -8,22 +8,40 @@
 import UIKit
 
 final class RMEpisodeViewController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
     
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    private let episodeView = RMEpisodeListView();
+    override func viewDidLoad() {
+        super.viewDidLoad();
+        episodeView.delegate = self;
+        layout();
     }
-    */
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        episodeView.collectionView.collectionViewLayout.invalidateLayout()
+    }
 
 }
+
+extension RMEpisodeViewController{
+    func layout(){
+        view.addSubview(episodeView);
+        NSLayoutConstraint.activate([
+            episodeView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            episodeView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            episodeView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            episodeView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        ])
+    }
+}
+
+
+////MARK: - RMCharacterListViewDelegate
+extension RMEpisodeViewController: RMEpisodeListViewDelegate{
+    func rmEpisodeListView(_ episodeListView: RMEpisodeListView, didSelectEpisode episode: RMEpisode) {
+        let viewModel = RMEpisodeDetailViewViewModel(episodeUrl: URL(string: episode.url));
+        let detailVc = RMEpisodeDetailViewController(url: viewModel.episodeUrl);
+        navigationController?.pushViewController(detailVc, animated: true);
+    }
+}
+

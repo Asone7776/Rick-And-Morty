@@ -8,11 +8,11 @@
 import UIKit
 
 final class RMEpisodeDetailViewController: UIViewController {
-    
-    private let url: URL?
+    private let viewModel:RMEpisodeDetailViewViewModel
+
     
     init(url: URL?){
-        self.url = url
+        self.viewModel = .init(episodeUrl: url);
         super.init(nibName: nil, bundle: nil);
     }
     
@@ -24,6 +24,7 @@ final class RMEpisodeDetailViewController: UIViewController {
         super.viewDidLoad()
         title = "Episode"
         style();
+        viewModel.fetchEpisode()
     }
     
 }
