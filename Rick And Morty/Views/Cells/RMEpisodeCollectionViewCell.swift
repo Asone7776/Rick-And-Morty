@@ -66,9 +66,11 @@ extension RMEpisodeCollectionViewCell{
         contentView.backgroundColor = .systemGray5;
         setupLayer();
     }
+    private func setBorderColorLayer(color: UIColor){
+        contentView.layer.borderColor = color.cgColor;
+    }
     private func setupLayer(){
         contentView.layer.cornerRadius = 8;
-        contentView.layer.borderColor = UIColor.systemBlue.cgColor;
         contentView.layer.borderWidth = 2
         contentView.clipsToBounds = true;
     }
@@ -78,9 +80,9 @@ extension RMEpisodeCollectionViewCell{
         stack.addArrangedSubview(airLabel);
         contentView.addSubviews(stack);
         NSLayoutConstraint.activate([
-            stack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            stack.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor),
             stack.topAnchor.constraint(equalTo: contentView.topAnchor),
-            stack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            stack.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor),
             stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ]);
     }
@@ -92,5 +94,6 @@ extension RMEpisodeCollectionViewCell{
         nameLabel.text = viewModel.episode;
         statusLabel.text = viewModel.name;
         airLabel.text = viewModel.air_date
+        setBorderColorLayer(color: viewModel.borderColor)
     }
 }

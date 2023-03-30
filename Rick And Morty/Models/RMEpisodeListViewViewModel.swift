@@ -7,19 +7,30 @@
 import UIKit
 
 protocol RMEpisodeListViewViewModelDelegate: AnyObject{
-    func didLoadInitialCharacters()
+    func didLoadInitialEpisodes()
     func didSelectEpisode(episode:RMEpisode)
     func didLoadMoreEpisodes(with newIndexPaths: [IndexPath])
 }
 
 final class RMEpisodeListViewViewModel:NSObject {
     public weak var delegate:RMEpisodeListViewViewModelDelegate?
-    private var apiInfo: RMGetAllEpisodesResponseInfo?
-    private var isLoadingCharacters = false
-    private var characters = [RMEpisode](){
+    private var apiInfo: RMGetAllEpisodessResponseInfo?
+    private var isLoadingEpisodes = false
+    private let borderColors:[UIColor] = [
+        .systemRed,
+        .systemCyan,
+        .systemGray,
+        .systemPink,
+        .systemPink,
+        .systemPurple,
+        .systemYellow,
+        .systemMint,
+        .systemTeal
+    ]
+    private var episodes = [RMEpisode](){
         didSet{
-            for char in characters {
-                let viewModel = RMEpisodeCollectionViewCellViewModel(name: char.name, air_date: char.air_date, episode: char.episode);
+            for episode in episodes {
+                let viewModel = RMEpisodeCollectionViewCellViewModel(name: episode.name, air_date: episode.air_date, episode: episode.episode,borderColor: self.borderColors.randomElement() ?? .systemBlue);
                 if !cellViewModels.contains(viewModel){
                     cellViewModels.append(viewModel);
                 }
@@ -32,22 +43,22 @@ final class RMEpisodeListViewViewModel:NSObject {
         RMService.shared.execute(.listEpisodesRequest, expecting: RMGetAllEpisodesResponse.self) {[weak self] result in
             switch result{
             case .success(let model):
-                self?.characters = model.results;
+                self?.episodes = model.results;
                 self?.apiInfo = model.info;
                 DispatchQueue.main.async {
-                    self?.delegate?.didLoadInitialCharacters();
+                    self?.delegate?.didLoadInitialEpisodes();
                 }
             case .failure(let error):
                 print(error.localizedDescription);
             }
         }
     }
-    //MARK: Fetch additional characters
+    //MARK: Fetch additional episodes
     public func fetchAdditionalEpisodes(url:URL){
-        guard !isLoadingCharacters else{
+        guard !isLoadingEpisodes else{
             return
         }
-        isLoadingCharacters = true
+        isLoadingEpisodes = true
         
         guard let request = RMRequest(url: url) else{
             return
@@ -60,21 +71,21 @@ final class RMEpisodeListViewViewModel:NSObject {
             switch result {
             case .success(let success):
                 strongSelf.apiInfo = success.info;
-                let originalCount = strongSelf.characters.count;
+                let originalCount = strongSelf.episodes.count;
                 let newCount = success.results.count;
                 let total = originalCount + newCount;
                 let startingIndex = total - newCount;
                 let indexPathsToAdd:[IndexPath] = Array(startingIndex..<(startingIndex+newCount)).compactMap {
                     return IndexPath(row: $0, section: 0);
                 }
-                strongSelf.characters.append(contentsOf: success.results);
+                strongSelf.episodes.append(contentsOf: success.results);
                 DispatchQueue.main.async {
                     strongSelf.delegate?.didLoadMoreEpisodes(with:indexPathsToAdd);
-                    strongSelf.isLoadingCharacters = false;
+                    strongSelf.isLoadingEpisodes = false;
                 }
             case .failure(let failure):
                 print(failure.localizedDescription);
-                strongSelf.isLoadingCharacters = false;
+                strongSelf.isLoadingEpisodes = false;
             }
         }
     }
@@ -116,14 +127,14 @@ extension RMEpisodeListViewViewModel:UICollectionViewDataSource{
 extension RMEpisodeListViewViewModel: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let bounds = UIScreen.main.bounds;
-        let width = (bounds.width - 30) / 2;
+        let width = (bounds.width - 20);
         return CGSize(width: width, height: 150 );
     }
 }
 extension RMEpisodeListViewViewModel:UICollectionViewDelegate{
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true);
-        delegate?.didSelectEpisode(episode: characters[indexPath.row]);
+        delegate?.didSelectEpisode(episode: episodes[indexPath.row]);
     }
 }
 
@@ -131,7 +142,7 @@ extension RMEpisodeListViewViewModel:UICollectionViewDelegate{
 extension RMEpisodeListViewViewModel:UIScrollViewDelegate{
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard shouldShowLoadMoreIndicator,
-              !isLoadingCharacters,
+              !isLoadingEpisodes,
               let nextUrl = apiInfo?.next,
               !cellViewModels.isEmpty,
               let url = URL(string: nextUrl) else {

@@ -14,6 +14,7 @@ final class RMEpisodeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad();
         episodeView.delegate = self;
+        addBarButton();
         layout();
     }
     override func viewDidLayoutSubviews() {
@@ -32,6 +33,14 @@ extension RMEpisodeViewController{
             episodeView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             episodeView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
+    }
+    private func addBarButton(){
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self , action: #selector(searchPressed))
+    }
+    
+    @objc private func searchPressed(){
+        let vc = RMSearchViewController(config: .init(type: .episode));
+        navigationController?.pushViewController(vc, animated: true);
     }
 }
 

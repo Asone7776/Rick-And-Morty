@@ -8,8 +8,8 @@
 import UIKit
 
 final class RMEpisodeDetailViewController: UIViewController {
-    private let viewModel:RMEpisodeDetailViewViewModel
-
+    private let viewModel: RMEpisodeDetailViewViewModel
+    private let detailView = RMEpisodeDetailView();
     
     init(url: URL?){
         self.viewModel = .init(episodeUrl: url);
@@ -22,8 +22,11 @@ final class RMEpisodeDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Episode"
+        title = "Episode";
         style();
+        layout();
+        detailView.delegate = self;
+        viewModel.delegate = self;
         viewModel.fetchEpisode()
     }
     
@@ -32,5 +35,26 @@ final class RMEpisodeDetailViewController: UIViewController {
 extension RMEpisodeDetailViewController{
     private func style(){
         view.backgroundColor = .systemBackground
+    }
+    private func layout(){
+        view.addSubview(detailView);
+        NSLayoutConstraint.activate([
+            detailView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            detailView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            detailView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            detailView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        ])
+    }
+}
+extension RMEpisodeDetailViewController:RMEpisodeDetailViewViewModelDelegate{
+    func didFetchEpisodeDetails() {
+        detailView.configure(with: viewModel)
+    }
+}
+
+extension RMEpisodeDetailViewController: RMEpisodeDetailViewDelegate{
+    func rmEpisodeDetailView(_ detailView: RMEpisodeDetailView, didSelect character: RMCharacter) {
+        let vc = RMCharacterDetailViewController(viewModel: .init(character: character));
+        navigationController?.pushViewController(vc, animated: true);
     }
 }

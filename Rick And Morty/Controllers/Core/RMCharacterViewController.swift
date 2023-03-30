@@ -12,6 +12,7 @@ final class RMCharacterViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad();
         characterView.delegate = self;
+        addBarButton();
         layout();
     }
     override func viewDidLayoutSubviews() {
@@ -28,6 +29,14 @@ extension RMCharacterViewController{
             characterView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             characterView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
+    }
+    
+    private func addBarButton(){
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self , action: #selector(searchPressed))
+    }
+    @objc private func searchPressed(){
+        let vc = RMSearchViewController(config: .init(type: .character));
+        navigationController?.pushViewController(vc, animated: true);
     }
 }
 //MARK: - RMCharacterListViewDelegate

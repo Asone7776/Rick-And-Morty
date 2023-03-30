@@ -83,7 +83,7 @@ extension RMEpisodeListView:RMEpisodeListViewViewModelDelegate{
         }
     }
     
-    func didLoadInitialCharacters() {
+    func didLoadInitialEpisodes() {
         self.collectionView.reloadData();
         self.collectionView.isHidden = false;
         self.spinner.stopAnimating();
