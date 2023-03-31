@@ -16,7 +16,7 @@ final class RMEpisodeListViewViewModel:NSObject {
     public weak var delegate:RMEpisodeListViewViewModelDelegate?
     private var apiInfo: RMGetAllEpisodessResponseInfo?
     private var isLoadingEpisodes = false
-    private let borderColors:[UIColor] = [
+    private let borderColors: [UIColor] = [
         .systemRed,
         .systemCyan,
         .systemGray,
