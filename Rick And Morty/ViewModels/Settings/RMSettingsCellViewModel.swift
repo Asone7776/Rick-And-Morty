@@ -7,10 +7,7 @@
 
 import UIKit
 
-struct RMSettingsCellViewModel:Identifiable {
-    var id = UUID();
-    
-    
+struct RMSettingsCellViewModel {
     public var image: UIImage?{
         type.iconImage
     }
