@@ -11,8 +11,11 @@ final class RMLocationDetailViewController: UIViewController {
     
     private let location: RMLocation
     
+    public let detailView = RMLocationDetailView();
+    
     init(location:RMLocation) {
         self.location = location
+        self.detailView.configure(with: location)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -33,6 +36,12 @@ extension RMLocationDetailViewController{
         view.backgroundColor = .systemBackground
     }
     private func layout(){
-        
+        view.addSubview(detailView);
+        NSLayoutConstraint.activate([
+            detailView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            detailView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            detailView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            detailView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        ])
     }
 }
