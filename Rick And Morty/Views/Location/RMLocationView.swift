@@ -23,14 +23,15 @@ class RMLocationView: UIView {
     }();
     
     public lazy var locationTable:UITableView = {
-        let table = UITableView();
+        let table = UITableView(frame: .zero, style: .grouped);
         table.translatesAutoresizingMaskIntoConstraints = false;
-        table.dataSource = self;
-        table.delegate = self;
+        table.dataSource = viewModel;
+        table.delegate = viewModel;
         table.rowHeight = RMLocationTableViewCell.rowHeight;
         table.isHidden = true;
         table.alpha = 0;
         table.register(RMLocationTableViewCell.self, forCellReuseIdentifier: RMLocationTableViewCell.identifier)
+        table.register(RMLocationFooterLoadingTableReusableView.self, forHeaderFooterViewReuseIdentifier: RMLocationFooterLoadingTableReusableView.identifier)
         return table;
     }();
     
@@ -66,35 +67,20 @@ extension RMLocationView{
     }
 }
 
-//MARK: Table setup
 
-extension RMLocationView: UITableViewDataSource{
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.cellViewModels.count;
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: RMLocationTableViewCell.identifier) as? RMLocationTableViewCell else{
-            fatalError("There is no such cell");
-        }
-        let item = viewModel.cellViewModels[indexPath.row];
-        cell.configure(with: item);
-        return cell;
-    }
-}
-
-
-extension RMLocationView: UITableViewDelegate{
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        guard let location = viewModel.location(at: indexPath.row) else {
-            return
-        }
-        delegate?.didSelectLocation(self, location: location);
-    }
-}
 
 extension RMLocationView: RMLocationViewViewModelDelegate{
+    func didLoadMoreLocations(with indexes: [IndexPath]) {
+        locationTable.performBatchUpdates {
+            locationTable.insertRows(at: indexes, with: .automatic)
+        }
+    }
+
+    
+    func didSelectLocation(location: RMLocation) {
+        delegate?.didSelectLocation(self, location: location)
+    }
+    
     func didLoadInitialLocations() {
         spinner.stopAnimating()
         locationTable.isHidden = false
@@ -104,3 +90,4 @@ extension RMLocationView: RMLocationViewViewModelDelegate{
         }
     }
 }
+

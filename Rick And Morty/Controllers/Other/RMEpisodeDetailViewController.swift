@@ -35,6 +35,7 @@ final class RMEpisodeDetailViewController: UIViewController {
 extension RMEpisodeDetailViewController{
     private func style(){
         view.backgroundColor = .systemBackground
+        navigationItem.largeTitleDisplayMode = .never
     }
     private func layout(){
         view.addSubview(detailView);

@@ -31,6 +31,8 @@ class RMLocationDetailView: UIView {
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout);
         view.dataSource = self;
         view.delegate = self;
+        view.isHidden = true;
+        view.alpha = 0;
         view.register(RMEpisodeDetailCollectionViewCell.self, forCellWithReuseIdentifier: RMEpisodeDetailCollectionViewCell.identifier)
         view.register(RMCharacterCollectionViewCell.self, forCellWithReuseIdentifier: RMCharacterCollectionViewCell.identifier)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -143,5 +145,9 @@ extension RMLocationDetailView:RMLocationDetailViewViewModelDelegate{
     func didPrepareData() {
         spinner.stopAnimating();
         collectionView.reloadData();
+        collectionView.isHidden = false;
+        UIView.animate(withDuration: 0.3) {
+            self.collectionView.alpha = 1;
+        }
     }
 }
