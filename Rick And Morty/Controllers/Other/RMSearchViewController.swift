@@ -8,7 +8,8 @@
 import UIKit
 
 final class RMSearchViewController: UIViewController {
-
+    private let viewModel:RMSearchViewViewModel
+    private let baseSearchView:RMSearchView
     struct Config {
         enum `Type`{
             case character // name|status|gender
@@ -27,21 +28,41 @@ final class RMSearchViewController: UIViewController {
         }
         let type: `Type`
     }
-    private let config:Config
+    
     
     init(config: Config){
-        self.config = config
+        self.viewModel = RMSearchViewViewModel(config: config)
+        self.baseSearchView = RMSearchView(viewModel: viewModel)
         super.init(nibName: nil, bundle: nil);
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = config.type.title
+        title = viewModel.config.type.title
         view.backgroundColor = .systemBackground
         navigationItem.largeTitleDisplayMode = .never
+        layout()
+        addSearchItem()
+    }
+}
+extension RMSearchViewController{
+    private func layout(){
+        view.addSubview(baseSearchView);
+        NSLayoutConstraint.activate([
+            baseSearchView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            baseSearchView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            baseSearchView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            baseSearchView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        ])
+    }
+    private func addSearchItem(){
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Search", style: .done, target: self, action: #selector(onSearch))
+    }
+    @objc private func onSearch(){
+        
     }
 }
