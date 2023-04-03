@@ -18,11 +18,11 @@ final class RMSearchViewController: UIViewController {
             var title: String {
                 switch self {
                 case .character:
-                    return "Search Character"
+                    return "Search Characters"
                 case .episode:
-                    return "Search Episode"
+                    return "Search Episodes"
                 case .location:
-                    return "Search Location"
+                    return "Search Locations"
                 }
             }
         }
