@@ -33,7 +33,7 @@ final class RMSearchViewController: UIViewController {
     init(config: Config){
         self.viewModel = RMSearchViewViewModel(config: config)
         self.baseSearchView = RMSearchView(viewModel: viewModel)
-        super.init(nibName: nil, bundle: nil);
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
@@ -42,6 +42,7 @@ final class RMSearchViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        baseSearchView.delegate = self
         title = viewModel.config.type.title
         view.backgroundColor = .systemBackground
         navigationItem.largeTitleDisplayMode = .never
@@ -68,5 +69,10 @@ extension RMSearchViewController{
     }
     @objc private func onSearch(){
         
+    }
+}
+extension RMSearchViewController: RMSearchViewDelegate{
+    func rmSearchView(_ view: RMSearchView, didSelectOption option: RMSearchInputViewViewModel.DynamicOptions) {
+            print(view,option,separator: "|")
     }
 }

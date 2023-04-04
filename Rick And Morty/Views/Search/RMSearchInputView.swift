@@ -7,7 +7,13 @@
 
 import UIKit
 
+protocol RMSearchInputViewDelegate: AnyObject{
+    func rmSearchInputView(_ inputView:RMSearchInputView,didSelectOption options: RMSearchInputViewViewModel.DynamicOptions)
+}
+
 final class RMSearchInputView: UIView {
+    
+    weak var delegate: RMSearchInputViewDelegate?
     
     let stackView: UIStackView = {
         let view = UIStackView()
@@ -15,15 +21,16 @@ final class RMSearchInputView: UIView {
         view.axis = .horizontal
         view.distribution = .fillEqually
         view.spacing = 10
-        view.alignment = .fill
+        view.alignment = .center
         return view;
     }()
     
-    private var viewModel:RMSearchInputViewViewModel?{
+    private var viewModel: RMSearchInputViewViewModel? {
         didSet{
             guard let viewModel = viewModel else{
                 return
             }
+            searchBar.delegate = viewModel
             searchBar.placeholder = viewModel.placeholder
             if viewModel.hasDynamicOptions{
                 let options = viewModel.options
@@ -48,22 +55,25 @@ final class RMSearchInputView: UIView {
     required init?(coder: NSCoder) {
         fatalError("No such view")
     }
+    
     public func configure(with model:RMSearchInputViewViewModel){
         self.viewModel = model
     }
+    
 }
 extension RMSearchInputView {
+    
     private func style(){
         translatesAutoresizingMaskIntoConstraints = false
     }
+    
     private func layout(){
         addSubviews(searchBar,stackView)
         NSLayoutConstraint.activate([
             searchBar.topAnchor.constraint(equalToSystemSpacingBelow: topAnchor, multiplier: 1),
             searchBar.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 1),
             trailingAnchor.constraint(equalToSystemSpacingAfter: searchBar.trailingAnchor, multiplier: 1),
-            searchBar.heightAnchor.constraint(equalToConstant: 50),
-            stackView.topAnchor.constraint(equalToSystemSpacingBelow: searchBar.bottomAnchor, multiplier: 1),
+            stackView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
             stackView.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 1),
             trailingAnchor.constraint(equalToSystemSpacingAfter: stackView.trailingAnchor, multiplier: 1),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -92,15 +102,17 @@ extension RMSearchInputView {
             stackView.addArrangedSubview(button)
         }
     }
-    public func presentKeyboard(){
+    
+    public func presentKeyboard() {
         searchBar.becomeFirstResponder()
     }
+    
     @objc private func onFilterButtonTapped(_ button: UIButton){
         guard let viewModel = viewModel else{
             return
         }
         let tag = button.tag
         let option = viewModel.options[tag]
-        
+        delegate?.rmSearchInputView(self, didSelectOption: option)
     }
 }

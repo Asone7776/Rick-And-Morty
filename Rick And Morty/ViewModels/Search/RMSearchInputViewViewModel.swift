@@ -50,6 +50,15 @@ final class RMSearchInputViewViewModel: NSObject {
 }
 extension RMSearchInputViewViewModel:UISearchBarDelegate{
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        print(searchText)
+//        print(searchText)
     }
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true);
+    }
+//    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+//        guard let text = searchBar.text,text.isEmpty else {
+//            return false
+//        }
+//        return true
+//    }
 }
