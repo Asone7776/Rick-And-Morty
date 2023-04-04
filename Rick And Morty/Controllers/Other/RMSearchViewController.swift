@@ -48,6 +48,10 @@ final class RMSearchViewController: UIViewController {
         layout()
         addSearchItem()
     }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        baseSearchView.presentKeyboard()
+    }
 }
 extension RMSearchViewController{
     private func layout(){

@@ -21,6 +21,7 @@ final class RMSearchView: UIView {
         layout()
     }
     
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -40,10 +41,13 @@ extension RMSearchView {
             noSearchView.centerXAnchor.constraint(equalTo: centerXAnchor),
             noSearchView.centerYAnchor.constraint(equalTo: centerYAnchor),
             
-            searchInputView.heightAnchor.constraint(equalToConstant: 150),
             searchInputView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            searchInputView.trailingAnchor.constraint(equalTo: trailingAnchor)
+            searchInputView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            searchInputView.heightAnchor.constraint(equalToConstant: viewModel.config.type == .episode ? 55 : 110)
         ])
+    }
+    public func presentKeyboard(){
+        searchInputView.presentKeyboard()
     }
 }
 
