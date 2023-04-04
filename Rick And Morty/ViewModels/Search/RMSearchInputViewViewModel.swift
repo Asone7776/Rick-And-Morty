@@ -10,10 +10,21 @@ import UIKit
 final class RMSearchInputViewViewModel: NSObject {
     private let type:RMSearchViewController.Config.`Type`;
     
-    enum DynamicOptions: String{
+    enum DynamicOption: String{
         case status = "Status"
         case gender = "Gender"
         case locationType = "Location Type"
+        
+        var choises:[String]{
+            switch self{
+            case .status:
+                return ["alive","dead","unknown"]
+            case .gender:
+                return ["male","female","genderless","unknown"]
+            case .locationType:
+                return ["planet","microverse","cluster","unknown"]
+            }
+        }
     }
     
     init(type: RMSearchViewController.Config.`Type`) {
@@ -27,7 +38,7 @@ final class RMSearchInputViewViewModel: NSObject {
             return false
         }
     }
-    public var options: [DynamicOptions]{
+    public var options: [DynamicOption]{
         switch type{
         case .character:
             return [.status,.gender]

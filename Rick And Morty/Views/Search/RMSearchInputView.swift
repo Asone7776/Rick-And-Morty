@@ -8,7 +8,7 @@
 import UIKit
 
 protocol RMSearchInputViewDelegate: AnyObject{
-    func rmSearchInputView(_ inputView:RMSearchInputView,didSelectOption options: RMSearchInputViewViewModel.DynamicOptions)
+    func rmSearchInputView(_ inputView:RMSearchInputView,didSelectOption options: RMSearchInputViewViewModel.DynamicOption)
 }
 
 final class RMSearchInputView: UIView {
@@ -79,7 +79,7 @@ extension RMSearchInputView {
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
-    private func createOptions(with options:[RMSearchInputViewViewModel.DynamicOptions]){
+    private func createOptions(with options:[RMSearchInputViewViewModel.DynamicOption]){
         for (index,option) in options.enumerated() {
             let button = UIButton()
             let spacing: CGFloat = 8

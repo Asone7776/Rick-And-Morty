@@ -8,6 +8,7 @@
 import UIKit
 
 final class RMSearchViewController: UIViewController {
+    
     private let viewModel:RMSearchViewViewModel
     private let baseSearchView:RMSearchView
     struct Config {
@@ -72,7 +73,12 @@ extension RMSearchViewController{
     }
 }
 extension RMSearchViewController: RMSearchViewDelegate{
-    func rmSearchView(_ view: RMSearchView, didSelectOption option: RMSearchInputViewViewModel.DynamicOptions) {
-            print(view,option,separator: "|")
+    func rmSearchView(_ view: RMSearchView, didSelectOption option: RMSearchInputViewViewModel.DynamicOption) {
+        let vc = RMSearchOptionPickerViewController(selectedOption: option) {selectedOption in
+            print(selectedOption)
+        }
+        vc.sheetPresentationController?.detents = [.medium()]
+        vc.sheetPresentationController?.prefersGrabberVisible = true
+        present(vc,animated: true);
     }
 }
