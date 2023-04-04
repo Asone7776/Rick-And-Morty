@@ -58,6 +58,7 @@ extension RMSearchOptionPickerViewController:UITableViewDelegate,UITableViewData
         tableView.deselectRow(at: indexPath, animated: true)
         let item = selectedOption.choises[indexPath.row]
         selectionBlock(item)
+        dismiss(animated: true)
     }
 }
 extension RMSearchOptionPickerViewController{
