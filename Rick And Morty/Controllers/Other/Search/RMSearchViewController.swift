@@ -69,13 +69,18 @@ extension RMSearchViewController{
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Search", style: .done, target: self, action: #selector(onSearch))
     }
     @objc private func onSearch(){
-        
+        viewModel.executeSearch()
     }
 }
 extension RMSearchViewController: RMSearchViewDelegate{
     func rmSearchView(_ view: RMSearchView, didSelectOption option: RMSearchInputViewViewModel.DynamicOption) {
-        let vc = RMSearchOptionPickerViewController(selectedOption: option) {selectedOption in
-            print(selectedOption)
+        let vc = RMSearchOptionPickerViewController(selectedOption: option) {[weak self] selectedOption in
+            guard let self = self else{
+                return
+            }
+            DispatchQueue.main.async {
+                self.viewModel.set(value: selectedOption, for: option)
+            }
         }
         vc.sheetPresentationController?.detents = [.medium()]
         vc.sheetPresentationController?.prefersGrabberVisible = true
