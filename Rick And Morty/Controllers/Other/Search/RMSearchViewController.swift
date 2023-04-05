@@ -12,7 +12,7 @@ final class RMSearchViewController: UIViewController {
     private let viewModel:RMSearchViewViewModel
     private let baseSearchView:RMSearchView
     struct Config {
-        enum `Type`{
+        enum `Type`:String{
             case character // name|status|gender
             case episode // name
             case location // name|type

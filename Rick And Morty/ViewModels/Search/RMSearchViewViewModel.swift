@@ -34,6 +34,13 @@ final class RMSearchViewViewModel {
         self.optionMapUpdateBlock = block
     }
     public func executeSearch() {
-        print(optionsMap)
+        guard let endpoint = RMEndpoint(rawValue: config.type.rawValue) else {
+            return
+        }
+        let queryItems = optionsMap.compactMap { option in
+            return URLQueryItem(name: option.key.rawValue.lowercased(), value: option.value)
+        }
+        let request = RMRequest(endpoint: endpoint,queryParameters: queryItems)
+//        RMService.shared.execute(request, expecting: <#T##(Decodable & Encodable).Protocol#>, completion: <#T##(Result<Decodable & Encodable, Error>) -> Void#>)
     }
 }
