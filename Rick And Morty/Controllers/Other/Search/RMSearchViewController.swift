@@ -16,6 +16,7 @@ final class RMSearchViewController: UIViewController {
             case character // name|status|gender
             case episode // name
             case location // name|type
+            
             var title: String {
                 switch self {
                 case .character:
@@ -24,6 +25,13 @@ final class RMSearchViewController: UIViewController {
                     return "Search Episodes"
                 case .location:
                     return "Search Locations"
+                }
+            }
+            var endpoint:RMEndpoint{
+                switch self{
+                case .character: return .character
+                case .episode: return .episode
+                case .location: return .location
                 }
             }
         }
@@ -40,7 +48,7 @@ final class RMSearchViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         baseSearchView.delegate = self

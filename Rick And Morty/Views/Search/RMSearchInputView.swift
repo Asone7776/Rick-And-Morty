@@ -9,13 +9,15 @@ import UIKit
 
 protocol RMSearchInputViewDelegate: AnyObject{
     func rmSearchInputView(_ inputView:RMSearchInputView,didSelectOption options: RMSearchInputViewViewModel.DynamicOption)
+    func rmSearchInputView(_ inputView:RMSearchInputView,didChangeSearch text:String)
+    func rmSearchInputDidTapSearchButton(_ inputView:RMSearchInputView)
 }
 
 final class RMSearchInputView: UIView {
     
     weak var delegate: RMSearchInputViewDelegate?
-    private var stackView:UIStackView?
     
+    private var stackView:UIStackView?
     
     private var viewModel: RMSearchInputViewViewModel? {
         didSet{
@@ -27,6 +29,15 @@ final class RMSearchInputView: UIView {
             if viewModel.hasDynamicOptions{
                 let options = viewModel.options
                 self.createOptions(with: options)
+            }
+            viewModel.registerForTextChange {[weak self] textChange in
+                guard let self = self else{
+                    return
+                }
+                self.delegate?.rmSearchInputView(self, didChangeSearch: textChange)
+            }
+            viewModel.registerForSearchTapped {
+                self.delegate?.rmSearchInputDidTapSearchButton(self);
             }
         }
     }

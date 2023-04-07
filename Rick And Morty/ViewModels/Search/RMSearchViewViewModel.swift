@@ -10,6 +10,9 @@ import UIKit
 final class RMSearchViewViewModel {
     
     let config:RMSearchViewController.Config
+    
+    private var searchResultHandler: (() -> Void)?
+    
     private var optionMapUpdateBlock: (((RMSearchInputViewViewModel.DynamicOption, String)) -> Void)?
     
     private var optionsMap: [RMSearchInputViewViewModel.DynamicOption:String] = [:]
@@ -33,14 +36,46 @@ final class RMSearchViewViewModel {
     public func registerOptionChangeBlock(_ block: @escaping ((RMSearchInputViewViewModel.DynamicOption, String)) -> Void ){
         self.optionMapUpdateBlock = block
     }
+    
+    public func registerForSearchResult(_ block: @escaping () -> Void){
+        self.searchResultHandler = block
+    }
+    
     public func executeSearch() {
-        guard let endpoint = RMEndpoint(rawValue: config.type.rawValue) else {
+        var optionsForSearch = [URLQueryItem(name: "name", value: searchText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed))]
+        optionsMap.forEach { option in
+            optionsForSearch.append(URLQueryItem(name: option.key.rawValue.lowercased(), value: option.value))
+        }
+        let request = RMRequest(endpoint: config.type.endpoint,queryParameters: optionsForSearch)
+            
+        switch config.type.endpoint{
+        case .character:
+            self.makeSearchAPICall(RMGetAllCharactersResponse.self, request: request)
+        case .episode:
+            self.makeSearchAPICall(RMGetAllEpisodesResponse.self, request: request)
+        case .location:
+            self.makeSearchAPICall(RMGetAllLocationsResponse.self, request: request)
+        }
+    }
+    private func makeSearchAPICall<T: Codable>(_ type: T.Type, request: RMRequest){
+        RMService.shared.execute(request, expecting: type ) {[weak self] result in
+            switch result {
+            case .success(let model):
+                self?.processSearchResult(model: model)
+            case .failure(let failure):
+                print(failure)
+            }
+        }
+    }
+    private func processSearchResult(model: Codable){
+        if let charactesModel = model as? RMGetAllCharactersResponse {
+            print(charactesModel)
+        }else if let episodeModel = model as? RMGetAllEpisodesResponse {
+            print(episodeModel)
+        }else if let locationModel = model as? RMGetAllLocationsResponse {
+            print(locationModel)
+        }else{
             return
         }
-        let queryItems = optionsMap.compactMap { option in
-            return URLQueryItem(name: option.key.rawValue.lowercased(), value: option.value)
-        }
-        let request = RMRequest(endpoint: endpoint,queryParameters: queryItems)
-//        RMService.shared.execute(request, expecting: <#T##(Decodable & Encodable).Protocol#>, completion: <#T##(Result<Decodable & Encodable, Error>) -> Void#>)
     }
 }

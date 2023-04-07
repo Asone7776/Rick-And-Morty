@@ -9,11 +9,13 @@ import UIKit
 
 final class RMSearchInputViewViewModel: NSObject {
     private let type:RMSearchViewController.Config.`Type`;
+    private var textChangeHandler: ((String)->Void)?
+    private var searchTappedHandler: (()->Void)?
     
     enum DynamicOption: String{
         case status = "Status"
         case gender = "Gender"
-        case locationType = "Location Type"
+        case type = "Location Type"
         
         var choises:[String]{
             switch self{
@@ -21,7 +23,7 @@ final class RMSearchInputViewViewModel: NSObject {
                 return ["alive","dead","unknown"]
             case .gender:
                 return ["male","female","genderless","unknown"]
-            case .locationType:
+            case .type:
                 return ["planet","microverse","cluster","unknown"]
             }
         }
@@ -43,7 +45,7 @@ final class RMSearchInputViewViewModel: NSObject {
         case .character:
             return [.status,.gender]
         case .location:
-            return [.locationType]
+            return [.type]
         case .episode:
             return []
         }
@@ -58,18 +60,22 @@ final class RMSearchInputViewViewModel: NSObject {
             return "Episode name"
         }
     }
+    
+    public func registerForTextChange(_ block: @escaping (String) -> Void){
+        self.textChangeHandler = block
+    }
+    
+    public func registerForSearchTapped(_ block: @escaping () -> Void){
+        self.searchTappedHandler = block
+    }
 }
 extension RMSearchInputViewViewModel:UISearchBarDelegate{
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        print(searchText)
+        textChangeHandler?(searchText)
     }
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = "";
         searchBar.endEditing(true);
+        searchTappedHandler?()
     }
-//    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
-//        guard let text = searchBar.text,text.isEmpty else {
-//            return false
-//        }
-//        return true
-//    }
 }
