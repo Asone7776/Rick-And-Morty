@@ -11,7 +11,7 @@ final class RMSearchViewViewModel {
     
     let config:RMSearchViewController.Config
     
-    private var searchResultHandler: (() -> Void)?
+    private var searchResultHandler: ((RMSearchResultsViewModel) -> Void)?
     
     private var optionMapUpdateBlock: (((RMSearchInputViewViewModel.DynamicOption, String)) -> Void)?
     
@@ -37,7 +37,7 @@ final class RMSearchViewViewModel {
         self.optionMapUpdateBlock = block
     }
     
-    public func registerForSearchResult(_ block: @escaping () -> Void){
+    public func registerForSearchResult(_ block: @escaping (RMSearchResultsViewModel) -> Void){
         self.searchResultHandler = block
     }
     
@@ -68,14 +68,24 @@ final class RMSearchViewViewModel {
         }
     }
     private func processSearchResult(model: Codable){
+        var resultsVM:RMSearchResultsViewModel?
         if let charactesModel = model as? RMGetAllCharactersResponse {
-            print(charactesModel)
+            resultsVM = .characters(charactesModel.results.compactMap({ character in
+                RMCharacterCollectionViewCellViewModel(characterName: character.name, characterStatus: character.status, characterImageUrl: URL(string: character.image))
+            }))
         }else if let episodeModel = model as? RMGetAllEpisodesResponse {
-            print(episodeModel)
+            resultsVM = .episodes(episodeModel.results.compactMap({ episode in
+                RMEpisodeCollectionViewCellViewModel(name: episode.name, air_date: episode.air_date, episode: episode.episode)
+            }))
         }else if let locationModel = model as? RMGetAllLocationsResponse {
-            print(locationModel)
+            resultsVM = .locations(locationModel.results.compactMap({ location in
+                RMLocationTableViewCellViewModel(location: location)
+            }))
+        }
+        if let result = resultsVM{
+            self.searchResultHandler?(result)
         }else{
-            return
+            print("Error")
         }
     }
 }
