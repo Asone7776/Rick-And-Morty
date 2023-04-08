@@ -40,10 +40,18 @@ final class RMNoSearchResultView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    public func show(){
+        isHidden = false
+    }
+    
+    public func hide(){
+        isHidden = true
+    }
 }
  
 extension RMNoSearchResultView {
     private func style(){
+        isHidden = true
         translatesAutoresizingMaskIntoConstraints = false
     }
     private func layout(){
