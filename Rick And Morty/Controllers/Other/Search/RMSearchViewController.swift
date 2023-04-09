@@ -81,6 +81,15 @@ extension RMSearchViewController{
     }
 }
 extension RMSearchViewController: RMSearchViewDelegate{
+    func didTapSearchButton() {
+        onSearch()
+    }
+    
+    func rmSearchView(_ view: RMSearchResultsView, didSelectLocation with: RMLocation) {
+        let vc = RMLocationDetailViewController(location: with);
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
     func rmSearchView(_ view: RMSearchView, didSelectOption option: RMSearchInputViewViewModel.DynamicOption) {
         let vc = RMSearchOptionPickerViewController(selectedOption: option) {[weak self] selectedOption in
             guard let self = self else{

@@ -9,6 +9,8 @@ import UIKit
 
 protocol RMSearchViewDelegate: AnyObject{
     func rmSearchView(_ view:RMSearchView,didSelectOption option: RMSearchInputViewViewModel.DynamicOption)
+    func rmSearchView(_ view:RMSearchResultsView,didSelectLocation with: RMLocation)
+    func didTapSearchButton()
 }
 
 final class RMSearchView: UIView {
@@ -27,6 +29,7 @@ final class RMSearchView: UIView {
         style()
         layout()
         registerHandlers(viewModel: viewModel)
+        resultsView.delegate = self
     }
     
     private func registerHandlers(viewModel: RMSearchViewViewModel){
@@ -97,7 +100,7 @@ extension RMSearchView:UICollectionViewDelegate, UICollectionViewDataSource {
 
 extension RMSearchView: RMSearchInputViewDelegate{
     func rmSearchInputDidTapSearchButton(_ inputView: RMSearchInputView) {
-        print("tapped");
+        delegate?.didTapSearchButton()
     }
     
     func rmSearchInputView(_ inputView: RMSearchInputView, didChangeSearch text: String) {
@@ -108,4 +111,9 @@ extension RMSearchView: RMSearchInputViewDelegate{
         delegate?.rmSearchView(self, didSelectOption: option)
     }
     
+}
+extension RMSearchView:RMSearchResultsViewDelegate {
+    func rmSearchResultsView(_ view: RMSearchResultsView, didTapLocation with: RMLocation) {
+        delegate?.rmSearchView(view, didSelectLocation: with)
+    }
 }

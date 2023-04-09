@@ -74,7 +74,6 @@ extension RMSearchInputViewViewModel:UISearchBarDelegate{
         textChangeHandler?(searchText)
     }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.text = "";
         searchBar.endEditing(true);
         searchTappedHandler?()
     }
